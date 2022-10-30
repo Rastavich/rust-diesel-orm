@@ -1,15 +1,14 @@
+use crate::{
+    messages::{FetchTeamMember, FetchTeamMemberById},
+    AppState, DbActor,
+};
+use actix::Addr;
 use actix_web::{
     get, post,
     web::{Data, Json, Path},
-    Responder, HttpResponse,
+    HttpResponse, Responder,
 };
 use serde::Deserialize;
-use crate::{
-    messages::{FetchUser, FetchUserArticles, CreateArticle},
-    AppState, DbActor
-};
-use actix::Addr;
-
 
 #[derive(Deserialize)]
 pub struct CreateArticleBody {
@@ -17,46 +16,46 @@ pub struct CreateArticleBody {
     pub content: String,
 }
 
-#[get("/users")]
-pub async fn fetch_users(state: Data<AppState>) -> impl Responder {
+#[get("/team-members")]
+pub async fn fetch_team_members(state: Data<AppState>) -> impl Responder {
     // "GET /users".to_string()
     let db: Addr<DbActor> = state.as_ref().db.clone();
 
-    match db.send(FetchUser).await {
+    match db.send(FetchTeamMember).await {
         Ok(Ok(info)) => HttpResponse::Ok().json(info),
         Ok(Err(_)) => HttpResponse::NotFound().json("No users found"),
         _ => HttpResponse::InternalServerError().json("Unable to retrieve users"),
     }
 }
 
-#[get("/users/{id}/articles")]
-pub async fn fetch_user_articles(state: Data<AppState>, path: Path<i32>) -> impl Responder {
+#[get("/team-members/{id}")]
+pub async fn fetch_team_member(state: Data<AppState>, path: Path<i32>) -> impl Responder {
     let id: i32 = path.into_inner();
     // format!("GET /users/{id}/articles")
 
     let db: Addr<DbActor> = state.as_ref().db.clone();
 
-    match db.send(FetchUserArticles { user_id: id }).await {
+    match db.send(FetchTeamMemberById { user_id: id }).await {
         Ok(Ok(info)) => HttpResponse::Ok().json(info),
         Ok(Err(_)) => HttpResponse::NotFound().json(format!("No articles for user {id}")),
         _ => HttpResponse::InternalServerError().json("Unable to retrieve user articles"),
     }
 }
 
-#[post("/users/{id}/articles")]
-pub async fn create_user_article(state: Data<AppState>, path: Path<i32>, body: Json<CreateArticleBody>) -> impl Responder {
-    let id: i32 = path.into_inner();
-    // format!("POST /users/{id}/articles")
+// #[post("/users/{id}/articles")]
+// pub async fn create_user_article(state: Data<AppState>, path: Path<i32>, body: Json<CreateArticleBody>) -> impl Responder {
+//     let id: i32 = path.into_inner();
+//     // format!("POST /users/{id}/articles")
 
-    let db: Addr<DbActor> = state.as_ref().db.clone();
+//     let db: Addr<DbActor> = state.as_ref().db.clone();
 
-    match db.send(CreateArticle {
-        title: body.title.to_string(),
-        content: body.content.to_string(),
-        created_by: id
-    }).await
-    {
-        Ok(Ok(info)) => HttpResponse::Ok().json(info),
-        _ => HttpResponse::InternalServerError().json("Failed to create article"),
-    }
-}
+//     match db.send(CreateArticle {
+//         title: body.title.to_string(),
+//         content: body.content.to_string(),
+//         created_by: id
+//     }).await
+//     {
+//         Ok(Ok(info)) => HttpResponse::Ok().json(info),
+//         _ => HttpResponse::InternalServerError().json("Failed to create article"),
+//     }
+// }

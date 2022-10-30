@@ -1,26 +1,47 @@
-﻿// @generated automatically by Diesel CLI.
+// @generated automatically by Diesel CLI.
 
 diesel::table! {
-    articles (id) {
+    meeting_members (id) {
         id -> Int4,
-        title -> Varchar,
-        content -> Text,
-        created_by -> Int4,
-        created_on -> Nullable<Timestamptz>,
+        meeting_id -> Int4,
+        member_id -> Int4,
     }
 }
 
 diesel::table! {
-    users (id) {
+    meetings (id) {
         id -> Int4,
-        first_name -> Varchar,
-        last_name -> Varchar,
+        name -> Varchar,
     }
 }
 
-diesel::joinable!(articles -> users (created_by));
+diesel::table! {
+    talking_points (id) {
+        id -> Int4,
+        meeting_id -> Int4,
+        member_id -> Int4,
+        topic -> Varchar,
+        content -> Varchar,
+        time_speaking -> Int4,
+    }
+}
+
+diesel::table! {
+    team_members (id) {
+        id -> Int4,
+        name -> Varchar,
+        active -> Bool,
+    }
+}
+
+diesel::joinable!(meeting_members -> meetings (meeting_id));
+diesel::joinable!(meeting_members -> team_members (member_id));
+diesel::joinable!(talking_points -> meeting_members (meeting_id));
+diesel::joinable!(talking_points -> team_members (member_id));
 
 diesel::allow_tables_to_appear_in_same_query!(
-    articles,
-    users,
+    meeting_members,
+    meetings,
+    talking_points,
+    team_members,
 );

@@ -3,26 +3,20 @@
 #![allow(unused)]
 #![allow(clippy::all)]
 
-
-use chrono::DateTime;
 use chrono::offset::Utc;
+use chrono::DateTime;
 use diesel::Queryable;
 use serde::Serialize;
 
 #[derive(Queryable, Debug, Serialize)]
-pub struct Article {
+pub struct TeamMember {
     pub id: i32,
-    pub title: String,
-    pub content: String,
-    pub created_by: i32,
-    #[serde(skip_serializing)]
-    pub created_on: Option<DateTime<Utc>>,
+    pub name: String,
+    pub active: bool,
 }
 
 #[derive(Queryable, Debug, Serialize)]
-pub struct User {
+pub struct Meeting {
     pub id: i32,
-    pub first_name: String,
-    pub last_name: String,
+    pub name: String,
 }
-
