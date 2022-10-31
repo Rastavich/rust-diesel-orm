@@ -1,8 +1,9 @@
-use crate::db_models::{Meeting, TeamMember};
+use crate::db_models::{Meeting, TalkingPoint, TeamMember};
 use crate::db_utils::DbActor;
 // use crate::insertables::NewArticle;
-use crate::messages::{FetchMeeting, FetchTeamMember, FetchTeamMemberById};
+use crate::messages::{FetchMeeting, FetchTalkingPoint, FetchTeamMember, FetchTeamMemberById};
 use crate::schema::meetings::dsl::*;
+use crate::schema::talking_points::dsl::*;
 use crate::schema::team_members::{dsl::*, id as user_id};
 use actix::Handler;
 use diesel::{self, prelude::*};
@@ -32,6 +33,32 @@ impl Handler<FetchTeamMemberById> for DbActor {
         team_members
             .filter(user_id.eq(msg.user_id))
             .get_result::<TeamMember>(&mut conn)
+    }
+}
+
+impl Handler<FetchMeeting> for DbActor {
+    type Result = QueryResult<Vec<Meeting>>;
+
+    fn handle(&mut self, _msg: FetchMeeting, _ctx: &mut Self::Context) -> Self::Result {
+        let mut conn = self
+            .0
+            .get()
+            .expect("Fetch Meeting: Unable to establish connection");
+
+        meetings.get_results::<Meeting>(&mut conn)
+    }
+}
+
+impl Handler<FetchTalkingPoint> for DbActor {
+    type Result = QueryResult<Vec<TalkingPoint>>;
+
+    fn handle(&mut self, _msg: FetchTalkingPoint, _ctx: &mut Self::Context) -> Self::Result {
+        let mut conn = self
+            .0
+            .get()
+            .expect("Fetch Meeting: Unable to establish connection");
+
+        talking_points.get_results::<TalkingPoint>(&mut conn)
     }
 }
 

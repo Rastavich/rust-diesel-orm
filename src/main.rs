@@ -16,7 +16,7 @@ mod schema;
 mod services;
 
 use db_utils::{get_pool, AppState, DbActor};
-use services::{fetch_team_member, fetch_team_members};
+use services::{fetch_meetings, fetch_team_member, fetch_team_members, fetch_talking_points};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -32,6 +32,8 @@ async fn main() -> std::io::Result<()> {
             }))
             .service(fetch_team_members)
             .service(fetch_team_member)
+            .service(fetch_meetings)
+            .service(fetch_talking_points)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

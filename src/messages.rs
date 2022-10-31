@@ -1,4 +1,4 @@
-use crate::db_models::{Meeting, TeamMember};
+use crate::db_models::{Meeting, TalkingPoint, TeamMember};
 use actix::Message;
 use diesel::QueryResult;
 
@@ -8,15 +8,17 @@ pub struct FetchTeamMember;
 
 #[derive(Message)]
 #[rtype(result = "QueryResult<Vec<Meeting>>")]
-pub struct FetchMeeting {
-    pub user_id: i32,
-}
+pub struct FetchMeeting;
 
 #[derive(Message)]
 #[rtype(result = "QueryResult<TeamMember>")]
 pub struct FetchTeamMemberById {
     pub user_id: i32,
 }
+
+#[derive(Message)]
+#[rtype(result = "QueryResult<Vec<TalkingPoint>>")]
+pub struct FetchTalkingPoint;
 
 // #[derive(Message)]
 // #[rtype(result = "QueryResult<Article>")]

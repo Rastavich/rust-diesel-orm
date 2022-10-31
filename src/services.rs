@@ -1,5 +1,5 @@
 use crate::{
-    messages::{FetchTeamMember, FetchTeamMemberById},
+    messages::{FetchMeeting, FetchTeamMember, FetchTeamMemberById, FetchTalkingPoint},
     AppState, DbActor,
 };
 use actix::Addr;
@@ -41,6 +41,31 @@ pub async fn fetch_team_member(state: Data<AppState>, path: Path<i32>) -> impl R
         _ => HttpResponse::InternalServerError().json("Unable to retrieve user articles"),
     }
 }
+
+#[get("/meetings")]
+pub async fn fetch_meetings(state: Data<AppState>) -> impl Responder {
+    // "GET /users".to_string()
+    let db: Addr<DbActor> = state.as_ref().db.clone();
+
+    match db.send(FetchMeeting).await {
+        Ok(Ok(info)) => HttpResponse::Ok().json(info),
+        Ok(Err(_)) => HttpResponse::NotFound().json("No meetings found"),
+        _ => HttpResponse::InternalServerError().json("Unable to retrieve meetings"),
+    }
+}
+
+#[get("/talking-points")]
+pub async fn fetch_talking_points(state: Data<AppState>) -> impl Responder {
+    // "GET /users".to_string()
+    let db: Addr<DbActor> = state.as_ref().db.clone();
+
+    match db.send(FetchTalkingPoint).await {
+        Ok(Ok(info)) => HttpResponse::Ok().json(info),
+        Ok(Err(_)) => HttpResponse::NotFound().json("No meetings found"),
+        _ => HttpResponse::InternalServerError().json("Unable to retrieve meetings"),
+    }
+}
+
 
 // #[post("/users/{id}/articles")]
 // pub async fn create_user_article(state: Data<AppState>, path: Path<i32>, body: Json<CreateArticleBody>) -> impl Responder {

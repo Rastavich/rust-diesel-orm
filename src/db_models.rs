@@ -20,3 +20,13 @@ pub struct Meeting {
     pub id: i32,
     pub name: String,
 }
+
+#[derive(Queryable, Debug, Serialize)]
+pub struct TalkingPoint {
+    pub id: i32,
+    pub meeting_id: i32,
+    pub member_id: i32,
+    pub topic: String,
+    pub content: String,
+    pub time_speaking: i32,
+}
