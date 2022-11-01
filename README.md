@@ -7,3 +7,14 @@
 7. diesel print-schema > src/schema.rs
 8. diesel_ext > src/db_models.rs
 9. https://github.com/diesel-rs/diesel/discussions/2947#discussioncomment-2025857
+
+# DOCKER
+
+## BUILD: 
+```
+docker build . --tag={TAG_NAME}
+```
+## RUN: 
+```
+docker run -e DATABASE_URL={DATABASE_URL} -p 8003:8080/tcp --network host -it {TAG_NAME}:latest
+```

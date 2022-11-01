@@ -1,5 +1,5 @@
 use crate::{
-    messages::{FetchMeeting, FetchTeamMember, FetchTeamMemberById, FetchTalkingPoint},
+    messages::{FetchMeeting, FetchTalkingPoint, FetchTeamMember, FetchTeamMemberById},
     AppState, DbActor,
 };
 use actix::Addr;
@@ -16,7 +16,13 @@ pub struct CreateArticleBody {
     pub content: String,
 }
 
-#[get("/team-members")]
+// Hello world on root path
+#[get("/")]
+pub async fn index() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
+}
+
+#[get("/api/team-members")]
 pub async fn fetch_team_members(state: Data<AppState>) -> impl Responder {
     // "GET /users".to_string()
     let db: Addr<DbActor> = state.as_ref().db.clone();
@@ -28,7 +34,7 @@ pub async fn fetch_team_members(state: Data<AppState>) -> impl Responder {
     }
 }
 
-#[get("/team-members/{id}")]
+#[get("/api/team-members/{id}")]
 pub async fn fetch_team_member(state: Data<AppState>, path: Path<i32>) -> impl Responder {
     let id: i32 = path.into_inner();
     // format!("GET /users/{id}/articles")
@@ -42,7 +48,7 @@ pub async fn fetch_team_member(state: Data<AppState>, path: Path<i32>) -> impl R
     }
 }
 
-#[get("/meetings")]
+#[get("/api/meetings")]
 pub async fn fetch_meetings(state: Data<AppState>) -> impl Responder {
     // "GET /users".to_string()
     let db: Addr<DbActor> = state.as_ref().db.clone();
@@ -54,7 +60,7 @@ pub async fn fetch_meetings(state: Data<AppState>) -> impl Responder {
     }
 }
 
-#[get("/talking-points")]
+#[get("/api/talking-points")]
 pub async fn fetch_talking_points(state: Data<AppState>) -> impl Responder {
     // "GET /users".to_string()
     let db: Addr<DbActor> = state.as_ref().db.clone();
@@ -65,7 +71,6 @@ pub async fn fetch_talking_points(state: Data<AppState>) -> impl Responder {
         _ => HttpResponse::InternalServerError().json("Unable to retrieve meetings"),
     }
 }
-
 
 // #[post("/users/{id}/articles")]
 // pub async fn create_user_article(state: Data<AppState>, path: Path<i32>, body: Json<CreateArticleBody>) -> impl Responder {
